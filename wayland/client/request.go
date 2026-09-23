@@ -28,8 +28,11 @@ func PutFixed(dst []byte, f float64) {
 	*(*int32)(unsafe.Pointer(&dst[0])) = fx
 }
 
+// PutString writes a wayland string into a slot of l bytes (padded to 32 bits).
+// The length on the wire is the string length plus the NUL terminator, not the
+// padded size; libwayland rejects the padded form as an embedded NUL.
 func PutString(dst []byte, v string, l int) {
-	PutUint32(dst[:4], uint32(l))
+	PutUint32(dst[:4], uint32(len(v)+1))
 	copy(dst[4:], []byte(v))
 }
 
